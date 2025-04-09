@@ -19,7 +19,7 @@
 	<form action="/cashbook/loginAction.jsp" method="post">
 		아이디 : <input type="text" name="id">
 		<br>
-		비밀번호 : <input type="text" name="password">
+		비밀번호 : <input type="password" name="password">
 		<button type="submit">로그인</button>
 	</form>
 </body>
