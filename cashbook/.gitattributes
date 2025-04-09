@@ -1,0 +1,6 @@
+# CSS 및 Bootstrap 폴더를 언어 감지에서 제외
+*.css linguist-detectable=false
+*.scss linguist-detectable=false
+
+# Java 파일을 우선적으로 인식하도록 설정
+*.java linguist-detectable
