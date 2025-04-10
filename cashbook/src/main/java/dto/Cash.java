@@ -3,6 +3,8 @@ package dto;
 public class Cash {
 	private int cashNo;			// 캐시 번호
 	private int categoryNo;		// 카테고리 번호
+	private String kind;		// 지출 or 식비
+	private String title;		// 소비 제목
 	private String cashDate;	// 결제한 시간
 	private int amount;			// 금액
 	private String memo;		// 메모
@@ -10,6 +12,18 @@ public class Cash {
 	private String createDate;	// 생성일
 	private String updateDate;	// 수정일
 	
+	public String getKind() {
+		return kind;
+	}
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	public int getCashNo() {
 		return cashNo;
 	}

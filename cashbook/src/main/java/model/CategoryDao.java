@@ -143,6 +143,49 @@ public class CategoryDao {
 		return count;
 	}
 	
+	// 카테고리 리스트 종류하고 이름 가져오기
+	public ArrayList<Category> selectCategoryValue() throws ClassNotFoundException, SQLException{
+		ArrayList<Category> list = new ArrayList<>();
+		
+		// SQL 연결
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cashbook","root","java1234");
+		
+		// 쿼리
+		String sql = "SELECT "
+				+ " category_no AS categoryNo,"
+				+ " kind,"
+				+ " title "
+				+ "FROM category";
+		
+		stmt = conn.prepareStatement(sql);
+		
+		// 쿼리 실행
+		rs = stmt.executeQuery();
+		
+		// 쿼리 디버깅
+		//System.out.println(stmt);
+		
+		// rs가 다음으로 움직이면서 데이터가 없을때 까지 실행
+		while(rs.next()) {
+			Category ct = new Category();
+			
+			ct.setCategoryNo(rs.getInt("categoryNo"));
+			ct.setKind(rs.getString("kind"));
+			ct.setTitle(rs.getString("title"));
+			
+			list.add(ct);
+		}
+		
+		conn.close();
+		
+		return list;
+	}
+	
 	//-------------------- UPDATE --------------------
 	
 	public boolean updateCategory(Category ct) throws ClassNotFoundException, SQLException{
@@ -198,7 +241,7 @@ public class CategoryDao {
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cashbook","root","java1234");
 		
 		// 삽입 쿼리
-		String sql = "INSERT INTO category(kind,title) VALUES(?,?)";
+		String sql = "INSERT IGNORE INTO category(kind,title) VALUES(?,?)";
 		
 		// ? 할당
 		stmt = conn.prepareStatement(sql);
