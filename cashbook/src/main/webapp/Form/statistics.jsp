@@ -15,7 +15,31 @@
 
     // 연도 통계
     ArrayList<HashMap<String,Object>> yearStats = csDao.selectYearAmount(year);
-
+    
+ 	// 월 통계
+    ArrayList<HashMap<String,Object>> monthStats = csDao.selectMonthAmount(year);
+    ArrayList<HashMap<String,Object>> monthStatsIncome = new ArrayList<>();
+    ArrayList<HashMap<String,Object>> monthStatsExpense = new ArrayList<>();
+    for (HashMap<String,Object> map : monthStats) {
+        if ("수입".equals(map.get("kind"))) {
+            monthStatsIncome.add(map);
+        } else {
+            monthStatsExpense.add(map);
+        }
+    }
+ 	
+    // 카테고리 통계
+    ArrayList<HashMap<String,Object>> ctStats = csDao.selectCategoryAmount(year);
+    ArrayList<HashMap<String,Object>> ctStatsIncome = new ArrayList<>();
+    ArrayList<HashMap<String,Object>> ctStatsExpense = new ArrayList<>();
+    for (HashMap<String,Object> map : ctStats) {
+        if ("수입".equals(map.get("kind"))) {
+        	ctStatsIncome.add(map);
+        } else {
+        	ctStatsExpense.add(map);
+        }
+    }
+    
     // 숫자 포맷 (천 단위 콤마 + "원")
     NumberFormat nf = NumberFormat.getInstance();
 %>
@@ -78,6 +102,73 @@
 	    </div>
 	</div>
 	
+	<!-- 월별 수입/지출 통계 (가로 정렬) -->
+	<div class="row mb-5">
+	    <!-- 수입 통계 카드 -->
+	    <div class="col-md-6 mb-4">
+	        <div class="card shadow-sm h-100">
+	            <div class="card-header bg-primary text-white d-flex align-items-center">
+	                <i class="fas fa-coins mr-2"></i> <%= year %>년 월별 <strong>수입</strong> 통계
+	            </div>
+	            <div class="card-body p-0">
+	                <table class="table table-bordered text-center table-hover mb-0">
+	                    <thead class="thead-light">
+	                        <tr>
+	                            <th>월</th>
+	                            <th>건수</th>
+	                            <th>금액</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <% for(HashMap<String,Object> map : monthStatsIncome) {
+	                            Number amount = (Number)map.get("amount");
+	                            String formattedAmount = nf.format(amount.longValue()) + " 원";
+	                        %>
+	                            <tr>
+	                                <td><%= map.get("month") %> 월</td>
+	                                <td><%= map.get("count") %></td>
+	                                <td><%= formattedAmount %></td>
+	                            </tr>
+	                        <% } %>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <!-- 지출 통계 카드 -->
+	    <div class="col-md-6 mb-4">
+	        <div class="card shadow-sm h-100">
+	            <div class="card-header bg-danger text-white d-flex align-items-center">
+	                <i class="fas fa-wallet mr-2"></i> <%= year %>년 월별 <strong>지출</strong> 통계
+	            </div>
+	            <div class="card-body p-0">
+	                <table class="table table-bordered text-center table-hover mb-0">
+	                    <thead class="thead-light">
+	                        <tr>
+	                            <th>월</th>
+	                            <th>건수</th>
+	                            <th>금액</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <% for(HashMap<String,Object> map : monthStatsExpense) {
+	                            Number amount = (Number)map.get("amount");
+	                            String formattedAmount = nf.format(amount.longValue()) + " 원";
+	                        %>
+	                            <tr>
+	                                <td><%= map.get("month") %> 월</td>
+	                                <td><%= map.get("count") %></td>
+	                                <td><%= formattedAmount %></td>
+	                            </tr>
+	                        <% } %>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
 	<!-- 연도별 통계 카드 -->
 	<div class="card mb-5 shadow-sm">
 	    <div class="card-header bg-success text-white d-flex align-items-center">
@@ -87,7 +178,6 @@
 	        <table class="table table-bordered text-center table-hover mb-0">
 	            <thead class="thead-light">
 	                <tr>
-	                    <th>연도</th>
 	                    <th>분류</th>
 	                    <th>건수</th>
 	                    <th>총액</th>
@@ -99,7 +189,6 @@
 	                    String formattedAmount = nf.format(amount.longValue()) + " 원";
 	                %>
 	                    <tr>
-	                        <td><%= map.get("year") %></td>
 	                        <td><%= map.get("kind") %></td>
 	                        <td><%= map.get("count") %></td>
 	                        <td><%= formattedAmount %></td>
@@ -109,7 +198,71 @@
 	        </table>
 	    </div>
 	</div>
+	
+		<!-- 연도별 카테고리별 통계 가로 정렬 -->
+	<div class="row mb-5">
+	    <!-- 수입 통계 카드 -->
+	    <div class="col-md-6">
+	        <div class="card shadow-sm h-100">
+	            <div class="card-header bg-info text-white d-flex align-items-center">
+	                <i class="fas fa-list-alt mr-2"></i> <%= year %>년 카테고리별 수입 통계
+	            </div>
+	            <div class="card-body p-0">
+	                <table class="table table-bordered text-center table-hover mb-0">
+	                    <thead class="thead-light">
+	                        <tr>
+	                            <th>카테고리</th>
+	                            <th>총액</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <% for (HashMap<String,Object> map : ctStatsIncome) {
+	                            Number amount = (Number)map.get("amount");
+	                            String formattedAmount = nf.format(amount.longValue()) + " 원";
+	                        %>
+	                        <tr>
+	                            <td><%= map.get("title") %></td>
+	                            <td><%= formattedAmount %></td>
+	                        </tr>
+	                        <% } %>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <!-- 지출 통계 카드 -->
+	    <div class="col-md-6">
+	        <div class="card shadow-sm h-100">
+	            <div class="card-header bg-danger text-white d-flex align-items-center">
+	                <i class="fas fa-list-alt mr-2"></i> <%= year %>년 카테고리별 지출 통계
+	            </div>
+	            <div class="card-body p-0">
+	                <table class="table table-bordered text-center table-hover mb-0">
+	                    <thead class="thead-light">
+	                        <tr>
+	                            <th>카테고리</th>
+	                            <th>총액</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <% for (HashMap<String,Object> map : ctStatsExpense) {
+	                            Number amount = (Number)map.get("amount");
+	                            String formattedAmount = nf.format(amount.longValue()) + " 원";
+	                        %>
+	                        <tr>
+	                            <td><%= map.get("title") %></td>
+	                            <td><%= formattedAmount %></td>
+	                        </tr>
+	                        <% } %>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 
+	
 
 <!-- JS -->
 <script src="/cashbook/vendor/jquery/jquery.min.js"></script>

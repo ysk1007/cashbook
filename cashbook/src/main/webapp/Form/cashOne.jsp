@@ -3,12 +3,18 @@
 <%@ page import="model.*" %>
 <%@ page import="java.util.*" %>
 <%
+	// requset 받기
     int cashNo = Integer.parseInt(request.getParameter("cashNo"));
+
+	// Cash 모델에서 캐시 데이터 하나 가져옴
     CashDao cashDao = new CashDao();
     HashMap<String, Object> map = cashDao.selectCashOne(cashNo);
+    
+    // Receit 모델에서 캐시에 영수증 데이터 가져옴
     ReceitDao reDao = new ReceitDao();
     Receit re = reDao.selectReceitOne(cashNo);
 
+    // 수입/지출 텍스트 Color
     String kind = map.get("kind").toString();
     String kindColor = kind.equals("수입") ? "text-success" : "text-danger";
 %>
@@ -71,18 +77,22 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">영수증</label><br>
                             <%
-                                if(re.getFileName() != null){
+                                if(re.getFileName() != null){	// 영수증이 있으면 영수증 이미지와 삭제 버튼 출력
                             %>
+                            	<!-- 이미지 -->
                                 <img src="/cashbook/upload/<%=re.getFileName()%>" class="img-fluid rounded border mb-2" style="max-height: 300px;">
+                                
+                                <!--  삭제 버튼 -->
                                 <div>
                                     <a href="/cashbook/Action/deleteReceit.jsp?cashNo=<%=cashNo%>&fileName=<%=re.getFileName()%>" class="btn btn-sm btn-outline-danger">
                                         <i class="fas fa-trash-alt"></i> 영수증 삭제
                                     </a>
                                 </div>
                             <%
-                                } else {
+                                } else {	// 영수증이 없으면 첨부 폼으로 가는 버튼 출력
                             %>
                                 <p class="text-muted">영수증 이미지를 첨부해주세요.</p>
+                                <!--  영수증 첨부 버튼 -->
                                 <a href="/cashbook/Form/insertReceitForm.jsp?cashNo=<%=cashNo%>" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-upload"></i> 영수증 첨부
                                 </a>

@@ -9,6 +9,8 @@
 
 	// db 삭제
 	ReceitDao reDao = new ReceitDao();
+	
+	// Receit 모델에서 delete 쿼리 실행
 	reDao.deleteReceit(cashNo);
 	
 	// 파일 삭제

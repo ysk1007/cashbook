@@ -9,23 +9,33 @@
 		cashNo = Integer.parseInt(request.getParameter("cashNo"));
 	}
 
+	// Cash, Category Model
 	CashDao cashDao = new CashDao();
 	CategoryDao ctDao = new CategoryDao();
 
+	// 캐시 번호 접근해서 cash 데이터 하나 가져오기
 	HashMap<String,Object> map = cashDao.selectCashOne(cashNo);
 
+	// 가져온 cash에서 수입/지출 값 받기
 	String kind = map.get("kind").toString();
+	
+	// 만약 페이지가 수정되어서 수입/지출 값이 바뀌었다면 request로 받기
 	if(request.getParameter("kind") != null){
 		kind = request.getParameter("kind");
 	}
 
+	// 가져온 cash에서 카테고리 값 받기
 	int categoryNo = Integer.parseInt(map.get("categoryNo").toString());
+	
+	// 만약 페이지가 수정되어서 카테고리 값이 바뀌었다면 request로 받기
 	if(request.getParameter("categoryNo") != null){
 		categoryNo = Integer.parseInt(request.getParameter("categoryNo"));
 	}
 
+	// 가져온 cash에서 생성일 받기
 	String targetDate = map.get("cashDate").toString();
 
+	// 카테고리 모델에서 수입/지출들의 카테고리 리스트
 	ArrayList<Category> ctList = ctDao.selectCategoryValue(kind);
 %>
 
@@ -77,6 +87,9 @@
 				<label class="form-label fw-semibold">카테고리</label>
 				<select class="form-select" name="categoryNo" onchange="this.form.submit()" required>
 					<% for(Category ct : ctList) { %>
+						<!-- 가져온 카테고리 리스트에서 출력
+							[수입/지출] {ex) 월급}
+						 -->
 						<option value="<%=ct.getCategoryNo()%>" <%=categoryNo == ct.getCategoryNo() ? "selected" : "" %>>[<%=ct.getKind()%>] <%=ct.getTitle()%></option>
 					<% } %>
 				</select>

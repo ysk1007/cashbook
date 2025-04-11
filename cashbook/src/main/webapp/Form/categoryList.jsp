@@ -3,12 +3,7 @@
 <%@ page import="dto.*" %>
 <%@ page import="model.*" %>
 <%
-    String admin = (String)session.getAttribute("admin");
-    if(admin == null){
-        response.sendRedirect("/cashbook/Form/loginForm.jsp");
-        return;
-    }
-
+	// 페이징 변수
     int currentPage = 1;
     int rowPerPage = 8;
     int lastPage = 0;
@@ -16,6 +11,7 @@
     String kind = "";
     String title = "";
 
+    // request 값 받기
     if(request.getParameter("currentPage") != null){
         currentPage = Integer.parseInt(request.getParameter("currentPage"));
     }
@@ -28,12 +24,20 @@
         title = request.getParameter("title");
     }
 
+    // 페이징 Class
     Paging p = new Paging();
+    
+    // 페이징 옵션으로 현재 페이지와 한 페이지에 보여줄 데이터 수 변수로 넣기
     p.setCurrentPage(currentPage);
     p.setRowPerPage(rowPerPage);
 
+    // 카테고리 모델
     CategoryDao ctDao = new CategoryDao();
+    
+    // 카테고리 리스트 데이터 가져와서 출력
     ArrayList<Category> ctList = ctDao.selectCategoryList(p, kind, title);
+    
+    // 전체 페이지와 마지막 페이지 가져오기
     int totalRow = ctDao.selectListRow(kind, title);
     lastPage = p.getLastPage(totalRow);
 %>

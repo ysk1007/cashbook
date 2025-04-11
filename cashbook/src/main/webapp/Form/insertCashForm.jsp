@@ -106,10 +106,13 @@
 			
 			<div class="mb-3">
 				<label class="form-label">카테고리</label>
+				<!-- onchange="this.form.submit()"로 값 변경되면 폼 다시 로딩 -->
 				<select class="form-select" name="categoryNo" onchange="this.form.submit()" required>
+					<!-- 카테고리 출력 -->
 					<%
 						for(Category ct : ctList){
-					%>
+					%>	
+						<!-- 선택된 값으로 체크 -->
 						<option value="<%=ct.getCategoryNo()%>" <%=categoryNo == ct.getCategoryNo() ? "selected" : "" %>>[<%=ct.getKind()%>] <%=ct.getTitle()%></option>
 					<%
 						}

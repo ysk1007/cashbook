@@ -172,7 +172,7 @@ public class CashDao {
 	}
 
 	
-	// 특정년도의 월별 수입/지출 총액 가져오기
+	// 특정년도, 특정월의 월별 수입/지출 총액 가져오기
 	public ArrayList<HashMap<String, Object>> selectMonthAmount(int year,int month) throws Exception {
 		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
 	    
@@ -292,6 +292,94 @@ public class CashDao {
 	    	map.put("year", rs.getInt("year"));
 	    	map.put("kind", rs.getString("kind"));
 	    	map.put("count", rs.getInt("count"));
+	    	map.put("amount", rs.getInt("amount"));
+	    	
+	    	list.add(map);
+	    }
+
+	    rs.close();
+	    stmt.close();
+	    conn.close();
+	    
+	    return list;
+	}
+	
+	// 특정년도의 월별 수입/지출 총액
+	public ArrayList<HashMap<String, Object>> selectMonthAmount(int year) throws Exception {
+		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+	    
+	    Connection conn = null;
+	    PreparedStatement stmt = null;
+	    ResultSet rs = null;
+	    
+	    Class.forName("com.mysql.cj.jdbc.Driver");
+	    conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cashbook", "root", "java1234");
+	    
+	    String sql = "SELECT "
+	    		+ " month(cash_date) AS month, "
+	    		+ " kind, "
+	    		+ " COUNT(*) AS count, "
+	    		+ " SUM(amount) AS amount"
+	    		+ " FROM category ct"
+	    		+ " INNER JOIN cash cs ON ct.category_no = cs.category_no"
+	    		+ " WHERE YEAR(cash_date) = ?"
+	    		+ " GROUP BY month(cash_date), ct.kind"
+	    		+ " ORDER BY month(cash_date);";
+		    
+	    stmt = conn.prepareStatement(sql);
+	    stmt.setInt(1, year);
+	    
+	    rs = stmt.executeQuery();
+	    
+	    while(rs.next()) {
+	    	HashMap<String,Object> map = new HashMap<>();
+	    	
+	    	map.put("month", rs.getInt("month"));
+	    	map.put("kind", rs.getString("kind"));
+	    	map.put("count", rs.getInt("count"));
+	    	map.put("amount", rs.getInt("amount"));
+	    	
+	    	list.add(map);
+	    }
+
+	    rs.close();
+	    stmt.close();
+	    conn.close();
+	    
+	    return list;
+	}
+	
+	// 카테고리별 수입/지출 총액
+	public ArrayList<HashMap<String, Object>> selectCategoryAmount(int year) throws Exception {
+		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+	    
+	    Connection conn = null;
+	    PreparedStatement stmt = null;
+	    ResultSet rs = null;
+	    
+	    Class.forName("com.mysql.cj.jdbc.Driver");
+	    conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cashbook", "root", "java1234");
+	    
+	    String sql = "SELECT "
+	    		+ " ct.kind AS kind, "
+	    		+ " ct.title AS title, "
+	    		+ " IFNULL(SUM(cs.amount),0) AS amount"
+	    		+ " FROM category ct"
+	    		+ " LEFT JOIN cash cs ON ct.category_no = cs.category_no"
+	    		+ "    AND YEAR(cs.cash_date) = ?"
+	    		+ " GROUP BY ct.kind, ct.title"
+	    		+ " ORDER BY ct.kind, ct.title";
+		    
+	    stmt = conn.prepareStatement(sql);
+	    stmt.setInt(1, year);
+	    
+	    rs = stmt.executeQuery();
+	    
+	    while(rs.next()) {
+	    	HashMap<String,Object> map = new HashMap<>();
+	    	
+	    	map.put("kind", rs.getString("kind"));
+	    	map.put("title", rs.getString("title"));
 	    	map.put("amount", rs.getInt("amount"));
 	    	
 	    	list.add(map);

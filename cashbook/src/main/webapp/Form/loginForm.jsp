@@ -2,7 +2,7 @@
 
 <%
     String login = "";
-    if(request.getParameter("login") != null){
+    if(request.getParameter("login") != null){	// 로그인 실패시 파람 값으로 error 메시지가 들어옴
         login = request.getParameter("login");
     }
 %>

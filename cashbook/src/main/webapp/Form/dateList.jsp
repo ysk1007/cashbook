@@ -4,15 +4,19 @@
 <%@ page import="model.*" %>
 <%@ include file="/inc/nav.jsp" %>
 <%
+	// request 값 받기
     String targetDate = request.getParameter("date");
 
+	// 년도, 월, 일 쪼개서 데이터 저장함
     int year = Integer.parseInt(targetDate.substring(0,4));
     int month = Integer.parseInt(targetDate.substring(5,7)) - 1;
     int day = Integer.parseInt(targetDate.substring(8,10));
 
+    // Cash와 Receit 모델
     CashDao cashDao = new CashDao();
     ReceitDao reDao = new ReceitDao();
     
+    // 타겟날의 거래 리스트 출력
     ArrayList<Cash> cashList = cashDao.selectCashList(targetDate);
 %>
 
@@ -75,16 +79,25 @@
                 </thead>
                 <tbody>
                     <%
-                        int totalIncome = 0;
-                        int totalExpense = 0;
+                        int totalIncome = 0;	// 총 수입
+                        int totalExpense = 0;	// 총 지출
+                        
                         for(Cash c : cashList){
-                            if(c.getKind().equals("수입")) totalIncome += c.getAmount();
-                            else totalExpense += c.getAmount();
+                        	
+                            if(c.getKind().equals("수입")){		// kind에 따라 수입 지출액 +
+                            	totalIncome += c.getAmount();
+                            }
                             
+                            else{
+                            	totalExpense += c.getAmount();
+                            }
+                            
+                            // 영수증 모델에서 해당하는 캐시 번호로 접근해서 영수증 데이터 가져옴
                            	Receit re = reDao.selectReceitOne(c.getCashNo());
                     %>
                     <tr>
                         <td class="<%=c.getKind().equals("수입") ? "kind-income" : "kind-expense"%>"><%=c.getKind()%></td>
+                        <!-- [타이틀] + [영수증 있으면 아이콘] -->
                         <td><%=c.getTitle()%><%=re.getFileName() != null ? "🧾":""%></td>
                         <td><%=String.format("%,d원", c.getAmount())%></td>
                         <td><%=c.getCreateDate()%></td>

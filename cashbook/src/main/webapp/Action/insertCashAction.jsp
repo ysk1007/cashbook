@@ -22,6 +22,7 @@
 	
 	CashDao cashDao = new CashDao();
 	
+	// 캐쉬 모델에서 insert 쿼리 실행
 	cashDao.insertCash(cs);
 	
 	response.sendRedirect("/cashbook/Form/dateList.jsp?date="+cashDate);
