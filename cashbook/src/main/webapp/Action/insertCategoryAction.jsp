@@ -14,5 +14,5 @@
 	
 	ctDao.insertCategory(ct);
 	
-	response.sendRedirect("/cashbook/categoryList.jsp");
+	response.sendRedirect("/cashbook/Form/categoryList.jsp");
 %>

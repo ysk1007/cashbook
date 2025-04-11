@@ -11,6 +11,8 @@
     int day = Integer.parseInt(targetDate.substring(8,10));
 
     CashDao cashDao = new CashDao();
+    ReceitDao reDao = new ReceitDao();
+    
     ArrayList<Cash> cashList = cashDao.selectCashList(targetDate);
 %>
 
@@ -35,15 +37,26 @@
             border-radius: 10px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
+        .kind-income {
+            color: #198754; /* Bootstrap success */
+            font-weight: bold;
+        }
+        .kind-expense {
+            color: #dc3545; /* Bootstrap danger */
+            font-weight: bold;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
     </style>
 </head>
 <body class="bg-light">
     <div class="container py-5">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-            <div class="date-title"><%=targetDate%> 내역</div>
+            <div class="date-title"><%=year%>.<%=month+1%>.<%=day%> 내역</div>
             <div class="d-flex gap-2">
-                <a href="/cashbook/insertCashForm.jsp?date=<%=targetDate%>" class="btn btn-outline-primary btn-action">내역 추가</a>
-                <a href="/cashbook/monthList.jsp?year=<%=year%>&month=<%=month%>" class="btn btn-outline-secondary btn-action">달력으로 돌아가기</a>
+                <a href="/cashbook/Form/insertCashForm.jsp?date=<%=targetDate%>" class="btn btn-outline-primary btn-action">내역 추가</a>
+                <a href="/cashbook/Form/monthList.jsp?year=<%=year%>&month=<%=month%>" class="btn btn-outline-secondary btn-action">달력으로 돌아가기</a>
             </div>
         </div>
 
@@ -55,6 +68,9 @@
                         <th>카테고리</th>
                         <th>금액</th>
                         <th>작성일</th>
+                        <th>수정</th>
+                        <th>삭제</th>
+                        <th>상세보기</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,12 +80,17 @@
                         for(Cash c : cashList){
                             if(c.getKind().equals("수입")) totalIncome += c.getAmount();
                             else totalExpense += c.getAmount();
+                            
+                           	Receit re = reDao.selectReceitOne(c.getCashNo());
                     %>
                     <tr>
-                        <td><%=c.getKind()%></td>
-                        <td><%=c.getTitle()%></td>
+                        <td class="<%=c.getKind().equals("수입") ? "kind-income" : "kind-expense"%>"><%=c.getKind()%></td>
+                        <td><%=c.getTitle()%><%=re.getFileName() != null ? "🧾":""%></td>
                         <td><%=String.format("%,d원", c.getAmount())%></td>
                         <td><%=c.getCreateDate()%></td>
+                        <td><a href="/cashbook/Form/updateCashForm.jsp?cashNo=<%=c.getCashNo()%>" class="btn btn-sm btn-outline-secondary">수정</a></td>
+                        <td><a href="/cashbook/Action/deleteCash.jsp?cashNo=<%=c.getCashNo()%>&date=<%=targetDate%>" class="btn btn-sm btn-outline-danger">삭제</a></td>
+                        <td><a href="/cashbook/Form/cashOne.jsp?cashNo=<%=c.getCashNo()%>" class="btn btn-sm btn-outline-info">보기</a></td>
                     </tr>
                     <%
                         }

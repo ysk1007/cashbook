@@ -144,7 +144,7 @@ public class CategoryDao {
 	}
 	
 	// 카테고리 리스트 종류하고 이름 가져오기
-	public ArrayList<Category> selectCategoryValue() throws ClassNotFoundException, SQLException{
+	public ArrayList<Category> selectCategoryValue(String kind) throws ClassNotFoundException, SQLException{
 		ArrayList<Category> list = new ArrayList<>();
 		
 		// SQL 연결
@@ -160,13 +160,17 @@ public class CategoryDao {
 				+ " category_no AS categoryNo,"
 				+ " kind,"
 				+ " title "
-				+ "FROM category";
+				+ " FROM category"
+				+ " WHERE kind LIKE ?";
 		
 		stmt = conn.prepareStatement(sql);
 		
+		// ? 값
+		stmt.setString(1, "%"+kind+"%");
+		
 		// 쿼리 실행
 		rs = stmt.executeQuery();
-		
+
 		// 쿼리 디버깅
 		//System.out.println(stmt);
 		
@@ -278,7 +282,7 @@ public class CategoryDao {
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cashbook","root","java1234");
 		
 		// 수정 쿼리
-		String sql = "DELETE FROM category"
+		String sql = "DELETE IGNORE FROM category"
 				+ " WHERE category_no = ?";
 		
 		stmt = conn.prepareStatement(sql);

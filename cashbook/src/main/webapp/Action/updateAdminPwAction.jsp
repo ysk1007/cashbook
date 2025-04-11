@@ -14,12 +14,12 @@
 	if(adminDao.updatePw(admin, pw, newPw)){	// 수정 성공
 		
 		// 로그인 폼으로
-		response.sendRedirect("/cashbook/loginForm.jsp");
+		response.sendRedirect("/cashbook/Form/loginForm.jsp");
 	}
 	else{	// 수정 실패
 		
 		// 다시 수정 페이지로
-		response.sendRedirect("/cashbook/updateAdminPwForm.jsp?admin="+admin);
+		response.sendRedirect("/cashbook/Form/updateAdminPwForm.jsp?admin="+admin);
 	}
 	
 %>

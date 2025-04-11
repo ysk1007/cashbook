@@ -24,5 +24,5 @@
 	
 	cashDao.insertCash(cs);
 	
-	response.sendRedirect("/cashbook/dateList.jsp?date="+cashDate);
+	response.sendRedirect("/cashbook/Form/dateList.jsp?date="+cashDate);
 %>

@@ -21,7 +21,7 @@
 <div class="container">
 	<div class="form-container">
 		<h2 class="text-center mb-4">카테고리 추가</h2>
-		<form action="/cashbook/insertCategoryAction.jsp" method="post">
+		<form action="/cashbook/Action/insertCategoryAction.jsp" method="post">
 			<div class="mb-3">
 				<label class="form-label">분류</label><br>
 				<div class="form-check form-check-inline">

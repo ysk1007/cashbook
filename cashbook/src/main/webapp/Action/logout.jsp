@@ -4,5 +4,5 @@
 <%
 	// 세션 초기화
 	session.invalidate();
-	response.sendRedirect("/cashbook/loginForm.jsp");
+	response.sendRedirect("/cashbook/Form/loginForm.jsp");
 %>

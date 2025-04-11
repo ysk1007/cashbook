@@ -20,12 +20,12 @@
 	if(ctDao.updateCategory(ct)){	// 수정 성공
 		
 		// 리스트로
-		response.sendRedirect("/cashbook/categoryList.jsp");
+		response.sendRedirect("/cashbook/Form/categoryList.jsp");
 	}
 	else{	// 수정 실패
 		
 		// 다시 수정 페이지로
-		response.sendRedirect("/cashbook/updateCategoryTitleForm?num="+num);
+		response.sendRedirect("/cashbook/Form/updateCategoryTitleForm?num="+num);
 	}
 	
 %>

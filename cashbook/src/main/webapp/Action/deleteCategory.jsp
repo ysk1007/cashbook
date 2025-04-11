@@ -11,11 +11,11 @@
 	if(ctDao.deleteCategory(num)){	// 삭제 성공
 		
 		// 리스트 페이지로
-		response.sendRedirect("/cashbook/categoryList.jsp");
+		response.sendRedirect("/cashbook/Form/categoryList.jsp");
 	}
 	else{	// 삭제 실패
 		
 		// 일단 리스트 페이지로
-		response.sendRedirect("/cashbook/categoryList.jsp");
+		response.sendRedirect("/cashbook/Form/categoryList.jsp");
 	}
 %>

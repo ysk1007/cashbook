@@ -6,7 +6,7 @@ import java.util.*;
 public class AdminDao {
 	
 	//-------------------- SELECT --------------------
-	public boolean login(String id, String pw) throws ClassNotFoundException, SQLException {
+	public boolean login(String id, String pw) throws Exception {
 		boolean isSuccess = false;	// 로그인 성공 유무
 		
 		// SQL 연결
@@ -43,7 +43,7 @@ public class AdminDao {
 
 	//-------------------- UPDATE --------------------
 	
-	public boolean updatePw(String admin, String pw, String newPw) throws ClassNotFoundException, SQLException{
+	public boolean updatePw(String admin, String pw, String newPw) throws Exception{
 		boolean isSuccess = false;	// 쿼리 성공 유무
 		int row = 0;	// 영향 받은 행의 개수
 		

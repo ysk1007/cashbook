@@ -11,33 +11,40 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>로그인 | Cashbook</title>
+    <title>로그인 | 가계부</title>
     <link href="/cashbook/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="/cashbook/css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(to right, #4e73df, #224abe);
         }
-        .login-card {
+        .card-login {
             max-width: 400px;
             margin: auto;
             margin-top: 100px;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            animation: fadeIn 0.6s ease-in-out;
         }
-        .login-logo {
-            font-size: 2rem;
+        .login-title {
             font-weight: 700;
+            font-size: 1.8rem;
             color: #4e73df;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="login-card card shadow-lg border-0">
+    <div class="card card-login shadow-lg border-0">
         <div class="card-body p-5">
             <div class="text-center mb-4">
-                <div class="login-logo">💰 Cashbook</div>
-                <h4 class="text-gray-900 mt-3">로그인</h4>
+                <div class="login-title">💰 가계부</div>
+                <h5 class="text-gray-900 mt-2">로그인</h5>
             </div>
 
             <% if(!login.equals("")) { %>
@@ -46,9 +53,9 @@
                 </div>
             <% } %>
 
-            <form class="user" action="/cashbook/loginAction.jsp" method="post">
+            <form class="user" action="/cashbook/Action/loginAction.jsp" method="post">
                 <div class="form-group">
-                    <input type="text" name="id" class="form-control form-control-user" placeholder="아이디 입력" required>
+                    <input type="text" name="id" class="form-control form-control-user" value="admin" readonly required>
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-control form-control-user" placeholder="비밀번호 입력" required>
