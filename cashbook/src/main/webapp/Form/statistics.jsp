@@ -42,9 +42,112 @@
     
     // 숫자 포맷 (천 단위 콤마 + "원")
     NumberFormat nf = NumberFormat.getInstance();
+    
+    // 예시: 월별 수입 데이터 처리
+    int[] incomeData = new int[12];  // 12개월
+    for (int i = 0; i < monthStatsIncome.size(); i++) {
+        HashMap<String, Object> map = monthStatsIncome.get(i);
+        int month = (Integer) map.get("month");
+        int amount = (Integer) map.get("amount");
+        incomeData[month - 1] = amount;  // 월별 수입 데이터를 배열에 저장
+    }
 %>
 <!DOCTYPE html>
 <html>
+
+<script>
+    // JSP에서 Java 변수를 JavaScript로 전달
+    var monthlyIncomeData = <%= Arrays.toString(incomeData) %>;
+
+    // 차트 데이터
+    var ctx = document.getElementById("myAreaChart");
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+            datasets: [{
+                label: "수입",
+                lineTension: 0.3,
+                backgroundColor: "rgba(78, 115, 223, 0.05)",
+                borderColor: "rgba(78, 115, 223, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                pointBorderColor: "rgba(78, 115, 223, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+                data: monthlyIncomeData,  // JSP에서 받은 데이터
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 25,
+                    top: 25,
+                    bottom: 0
+                }
+            },
+            scales: {
+                xAxes: [{
+                    time: {
+                        unit: 'date'
+                    },
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 7
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        maxTicksLimit: 5,
+                        padding: 10,
+                        callback: function(value) {
+                            return '₩' + value.toLocaleString();  // 통화 단위 표시
+                        }
+                    },
+                    gridLines: {
+                        color: "rgb(234, 236, 244)",
+                        zeroLineColor: "rgb(234, 236, 244)",
+                        drawBorder: false,
+                        borderDash: [2],
+                        zeroLineBorderDash: [2]
+                    }
+                }],
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                titleMarginBottom: 10,
+                titleFontColor: '#6e707e',
+                titleFontSize: 14,
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                intersect: false,
+                mode: 'index',
+                caretPadding: 10,
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return '수입: ₩' + tooltipItem.yLabel.toLocaleString();
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 <head>
     <meta charset="UTF-8">
     <title>통계</title>
@@ -71,6 +174,21 @@
 	        </div>
 	    </div>
 	</form>
+	
+	<!-- Area Chart -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">범위 차트</h6>
+        </div>
+        <div class="card-body">
+            <div class="chart-area">
+                <canvas id="myAreaChart"></canvas>
+            </div>
+            <hr>
+            Styling for the area chart can be found in the
+            <code>/js/demo/chart-area-demo.js</code> file.
+        </div>
+    </div>
 	
 	<!-- 전체 통계 카드 -->
 	<div class="card mb-5 shadow-sm">
@@ -262,7 +380,22 @@
 	    </div>
 	</div>
 
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
 	
+<!-- Page level plugins -->
+<script src="vendor/chart.js/Chart.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="js/demo/chart-area-demo.js"></script>
 
 <!-- JS -->
 <script src="/cashbook/vendor/jquery/jquery.min.js"></script>
