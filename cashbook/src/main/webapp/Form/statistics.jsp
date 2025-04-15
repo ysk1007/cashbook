@@ -15,8 +15,8 @@
 
     // 연도 통계
     ArrayList<HashMap<String,Object>> yearStats = csDao.selectYearAmount(year);
-    
- 	// 월 통계
+
+    // 월 통계
     ArrayList<HashMap<String,Object>> monthStats = csDao.selectMonthAmount(year);
     ArrayList<HashMap<String,Object>> monthStatsIncome = new ArrayList<>();
     ArrayList<HashMap<String,Object>> monthStatsExpense = new ArrayList<>();
@@ -27,155 +27,70 @@
             monthStatsExpense.add(map);
         }
     }
- 	
+
     // 카테고리 통계
     ArrayList<HashMap<String,Object>> ctStats = csDao.selectCategoryAmount(year);
     ArrayList<HashMap<String,Object>> ctStatsIncome = new ArrayList<>();
     ArrayList<HashMap<String,Object>> ctStatsExpense = new ArrayList<>();
     for (HashMap<String,Object> map : ctStats) {
         if ("수입".equals(map.get("kind"))) {
-        	ctStatsIncome.add(map);
+            ctStatsIncome.add(map);
         } else {
-        	ctStatsExpense.add(map);
+            ctStatsExpense.add(map);
         }
     }
-    
-    // 숫자 포맷 (천 단위 콤마 + "원")
+
+    // 숫자 포맷
     NumberFormat nf = NumberFormat.getInstance();
-    
-    // 예시: 월별 수입 데이터 처리
-    int[] incomeData = new int[12];  // 12개월
+
+    // 월별 수입 데이터 처리
+    int[] incomeData = new int[12];
     for (int i = 0; i < monthStatsIncome.size(); i++) {
         HashMap<String, Object> map = monthStatsIncome.get(i);
         int month = (Integer) map.get("month");
         int amount = (Integer) map.get("amount");
-        incomeData[month - 1] = amount;  // 월별 수입 데이터를 배열에 저장
+        incomeData[month - 1] = amount;
     }
+    
+    int[] expenseData = new int[12];  // 12개월
+	for (int i = 0; i < monthStatsExpense.size(); i++) {
+	    HashMap<String, Object> map = monthStatsExpense.get(i);
+	    int month = (Integer) map.get("month");
+	    int amount = (Integer) map.get("amount");
+	    expenseData[month - 1] = amount;
+	}
 %>
 <!DOCTYPE html>
 <html>
-
-<script>
-    // JSP에서 Java 변수를 JavaScript로 전달
-    var monthlyIncomeData = <%= Arrays.toString(incomeData) %>;
-
-    // 차트 데이터
-    var ctx = document.getElementById("myAreaChart");
-    var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-            datasets: [{
-                label: "수입",
-                lineTension: 0.3,
-                backgroundColor: "rgba(78, 115, 223, 0.05)",
-                borderColor: "rgba(78, 115, 223, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointBorderColor: "rgba(78, 115, 223, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-                data: monthlyIncomeData,  // JSP에서 받은 데이터
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 25,
-                    top: 25,
-                    bottom: 0
-                }
-            },
-            scales: {
-                xAxes: [{
-                    time: {
-                        unit: 'date'
-                    },
-                    gridLines: {
-                        display: false,
-                        drawBorder: false
-                    },
-                    ticks: {
-                        maxTicksLimit: 7
-                    }
-                }],
-                yAxes: [{
-                    ticks: {
-                        maxTicksLimit: 5,
-                        padding: 10,
-                        callback: function(value) {
-                            return '₩' + value.toLocaleString();  // 통화 단위 표시
-                        }
-                    },
-                    gridLines: {
-                        color: "rgb(234, 236, 244)",
-                        zeroLineColor: "rgb(234, 236, 244)",
-                        drawBorder: false,
-                        borderDash: [2],
-                        zeroLineBorderDash: [2]
-                    }
-                }],
-            },
-            legend: {
-                display: false
-            },
-            tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                titleMarginBottom: 10,
-                titleFontColor: '#6e707e',
-                titleFontSize: 14,
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                intersect: false,
-                mode: 'index',
-                caretPadding: 10,
-                callbacks: {
-                    label: function(tooltipItem) {
-                        return '수입: ₩' + tooltipItem.yLabel.toLocaleString();
-                    }
-                }
-            }
-        }
-    });
-</script>
-
 <head>
     <meta charset="UTF-8">
     <title>통계</title>
     <link href="/cashbook/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="/cashbook/css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- 차트.js 로드 -->
 </head>
 <body id="page-top">
-<%@ include file="/inc/nav.jsp" %> <!-- 상단 네비게이션 -->
+<%@ include file="/inc/nav.jsp" %>
 
 <div class="container mt-5">
     <h3 class="text-gray-800 font-weight-bold mb-4">📊 수입/지출 통계</h3>
 
-	    <!-- 연도 선택 폼 -->
-	<form method="get" action="/cashbook/Form/statistics.jsp" class="form-inline justify-content-center mb-5">
-	    <div class="input-group">
-	        <div class="input-group-prepend">
-	            <span class="input-group-text font-weight-bold bg-light">📅 연도</span>
-	        </div>
-	        <input type="number" name="year" value="<%=year%>" class="form-control text-center" style="width: 120px;" min="2000" max="2100">
-	        <div class="input-group-append">
-	            <button type="submit" class="btn btn-outline-primary">
-	                <i class="fas fa-search mr-1"></i> 조회
-	            </button>
-	        </div>
-	    </div>
-	</form>
-	
-	<!-- Area Chart -->
+    <!-- 연도 선택 -->
+    <form method="get" action="/cashbook/Form/statistics.jsp" class="form-inline justify-content-center mb-5">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text font-weight-bold bg-light">📅 연도</span>
+            </div>
+            <input type="number" name="year" value="<%=year%>" class="form-control text-center" style="width: 120px;" min="2000" max="2100">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search mr-1"></i> 조회
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- 차트 -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">범위 차트</h6>
@@ -184,11 +99,85 @@
             <div class="chart-area">
                 <canvas id="myAreaChart"></canvas>
             </div>
-            <hr>
-            Styling for the area chart can be found in the
-            <code>/js/demo/chart-area-demo.js</code> file.
         </div>
     </div>
+
+    <!-- 차트 스크립트 -->
+    <script>
+        var monthlyIncomeData = <%= Arrays.toString(incomeData) %>;
+        var monthlyExpenseData = <%= Arrays.toString(expenseData) %>;
+
+        var ctx = document.getElementById("myAreaChart");
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                datasets: [{
+                    label: "수입",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                    borderColor: "rgba(78, 115, 223, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: monthlyIncomeData,
+                },
+           		{
+                 	  label: "지출",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(255, 99, 132, 0.05)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: monthlyExpenseData,
+                  	},],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { left: 10, right: 25, top: 25, bottom: 0 }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { maxTicksLimit: 12 }
+                    },
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return '₩' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)"
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '수입: ₩' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 	
 	<!-- 전체 통계 카드 -->
 	<div class="card mb-5 shadow-sm">
